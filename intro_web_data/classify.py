@@ -8,7 +8,6 @@ Copyright (c) 2011 Hilary Mason. All rights reserved.
 """
 
 import re, string
-
 from nltk import FreqDist
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
@@ -31,7 +30,7 @@ class NaiveBayesClassifier(object):
         
         p = 1
         for feature in features:
-            print "%s - %s - %s" % (feature, category, self.weighted_prob(feature, category))
+            # print "%s - %s - %s" % (feature, category, self.weighted_prob(feature, category))
             p *= self.weighted_prob(feature, category)
             
         return p
@@ -106,17 +105,26 @@ class NaiveBayesClassifier(object):
         self.increment_cat(category)
 
 if __name__ == '__main__':
-    labels = ['arts', 'sports'] # these are the categories we want
+    labels = ['arts', 'travel'] # these are the categories we want
     data = {}
     for label in labels:
         f = open(label, 'r')
         data[label] = f.readlines()
-        # print len(data[label])
+        print len(data[label])
         f.close()
 
     nb = NaiveBayesClassifier()
     nb.train_from_data(data)
-    print nb.probability("Early Friday afternoon, the lead negotiators for the N.B.A. and the players union will hold a bargaining session in Beverly Hills — the latest attempt to break a 12-month stalemate on a new labor deal.", 'arts')
-    print nb.probability("Early Friday afternoon, the lead negotiators for the N.B.A. and the players union will hold a bargaining session in Beverly Hills — the latest attempt to break a 12-month stalemate on a new labor deal.", 'sports')
+
+    arts_probability = nb.probability("New Youth Center at American Indian Museum Focuses on Invention", 'arts')
+    travel_probability = nb.probability("New Youth Center at American Indian Museum Focuses on Invention", 'travel')
+
+    print arts_probability
+    print travel_probability
+    
+    if arts_probability > travel_probability:
+        print "It is more likely to be in arts news"
+    else:
+        print "It is more likely to be in travel news"
 
 
